@@ -5,12 +5,12 @@ import "errors"
 type IterationChecksumMod func(checksum int, weigthel int, digit int) int
 type FinalChecksumMod func(checksum int) int
 
-var Modulo11Func = func(checksum int) int {
+func Modulo11(checksum int) int {
 	checksum = (checksum % 11) % 10
 	return checksum
 }
 
-var MultipleByWeigthAndAddToChecksumFunc = func(checksum int, weigthel int, digit int) int {
+func MultipleByWeigthAndAddToChecksum(checksum int, weigthel int, digit int) int {
 	el := (weigthel * digit)
 	checksum += el
 	return checksum

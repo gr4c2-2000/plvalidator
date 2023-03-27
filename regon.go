@@ -12,6 +12,6 @@ func Regon(regon string) bool {
 	if err != nil {
 		return false
 	}
-	controlDigit := CheckSum(weight, regonDigits, MultipleByWeigthAndAddToChecksumFunc, Modulo11Func)
+	controlDigit := CheckSum(weight, regonDigits, MultipleByWeigthAndAddToChecksum, Modulo11)
 	return controlDigit == regonDigits[regonlen-1]
 }

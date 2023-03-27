@@ -6,21 +6,23 @@ import (
 	"time"
 )
 
-var peseltimeBoundries map[int]int = map[int]int{1800: 80, 1900: 0, 2000: 20, 2100: 40, 2200: 60}
+var peselTimeBoundries map[int]int = map[int]int{1800: 80, 1900: 0, 2000: 20, 2100: 40, 2200: 60}
 var weightPesel []int = []int{1, 3, 7, 9, 1, 3, 7, 9, 1, 3}
-var PeselChecksumIteration = func(checksum int, weigthel int, digit int) int {
+
+const PESEL_LENGTH = 11
+const FEMALE = "Female"
+const MALE = "Male"
+
+func PeselChecksumIteration(checksum int, weigthel int, digit int) int {
 	el := (weigthel * digit) % 10
 	checksum += el
 	return checksum
 }
-var PeselLength = 11
-var PeselChecksumFinal = func(checksum int) int {
+
+func PeselChecksumFinal(checksum int) int {
 	checksum = 10 - (checksum % 10)
 	return checksum
 }
-
-const FEMALE = "Female"
-const MALE = "Male"
 
 // pesel is a struct representation of Polish personal identification number.
 // A correct PESEL contains information about the birth date and gender.
@@ -90,7 +92,7 @@ func (p *pesel) date() error {
 	day := p.splited[4]*10 + p.splited[5]
 	year := 0
 	month := 0
-	for ye, sum := range peseltimeBoundries {
+	for ye, sum := range peselTimeBoundries {
 		if m > (sum) && m <= (sum+12) {
 			year = y + ye
 			month = m - sum
@@ -106,7 +108,7 @@ func (p *pesel) date() error {
 
 // length checks if the provided PESEL is the correct length (11 characters).
 func (p *pesel) length() error {
-	if len(p.Id) == PeselLength {
+	if len(p.Id) == PESEL_LENGTH {
 		return nil
 	}
 	return errors.New("INCORECT_LENGTH")
@@ -127,7 +129,7 @@ func (p *pesel) charatters() error {
 // If the calculated checksum matches the last digit of the PESEL number, it returns nil,
 // otherwise it returns an error.
 func (p *pesel) checksum() error {
-	imputcs := p.splited[PeselLength-1]
+	imputcs := p.splited[PESEL_LENGTH-1]
 	if imputcs == p.Checksum() {
 		return nil
 	}
