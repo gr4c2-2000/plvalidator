@@ -3,7 +3,6 @@ package plvalidator
 // Package pesel implements a validation and parsing of Polish personal identification number (PESEL).
 import (
 	"errors"
-	"strconv"
 	"time"
 )
 
@@ -14,6 +13,7 @@ var PeselChecksumIteration = func(checksum int, weigthel int, digit int) int {
 	checksum += el
 	return checksum
 }
+var PeselLength = 11
 var PeselChecksumFinal = func(checksum int) int {
 	checksum = 10 - (checksum % 10)
 	return checksum
@@ -27,7 +27,6 @@ const MALE = "Male"
 type pesel struct {
 	Id       string
 	splited  []int
-	numeric  int
 	birthday time.Time
 	gender   string
 	valid    bool
@@ -107,7 +106,7 @@ func (p *pesel) date() error {
 
 // length checks if the provided PESEL is the correct length (11 characters).
 func (p *pesel) length() error {
-	if len(p.Id) == 11 {
+	if len(p.Id) == PeselLength {
 		return nil
 	}
 	return errors.New("INCORECT_LENGTH")
@@ -116,10 +115,6 @@ func (p *pesel) length() error {
 // charatters converts the provided PESEL to numeric and splits it into digits.
 func (p *pesel) charatters() error {
 	var err error
-	p.numeric, err = strconv.Atoi(p.Id)
-	if err != nil {
-		return err
-	}
 	p.splited, err = SplitToInt(p.Id)
 	if err != nil {
 		return err
@@ -132,7 +127,7 @@ func (p *pesel) charatters() error {
 // If the calculated checksum matches the last digit of the PESEL number, it returns nil,
 // otherwise it returns an error.
 func (p *pesel) checksum() error {
-	imputcs := p.numeric % 10
+	imputcs := p.splited[PeselLength-1]
 	if imputcs == p.Checksum() {
 		return nil
 	}
